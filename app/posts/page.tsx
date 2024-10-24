@@ -2,7 +2,7 @@ import Link from "next/link";
 import getSheetData from "@/lib/googleSheets";
 import { ModeToggle } from "@/components/ModeToggle";
 import Pagination from "@/components/Pagination";
-import { MoveRight } from "lucide-react";
+import { MoveLeft, MoveRight } from "lucide-react";
 
 export const metadata = {
   title: "Questions",
@@ -12,9 +12,13 @@ interface SearchParams {
   page?: string;
 }
 
-export default async function Home({ searchParams }: { searchParams: SearchParams }) {
-  const page = parseInt(searchParams.page ?? '1') || 1;
-  const postsPerPage = 3;
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const page = parseInt(searchParams.page ?? "1") || 1;
+  const postsPerPage = 10;
   const data = await getSheetData("A", "H");
 
   const rows = (data ?? []).slice(1);
@@ -37,10 +41,13 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
   const paginatedPosts = posts.slice(start, end);
 
   return (
-    <div className="flex flex-col items-center justify-center w-[98vw] pb-4">
-      <div className="relative flex items-center justify-center w-full mt-5">
+    <div className="flex flex-col items-center justify-center w-[98vw] pb-4 overflow-hidden">
+      <div className="relative flex items-center justify-between w-full mt-5 max-w-[800px]">
+        <Link href="/" className="ml-5">
+          <MoveLeft size={20} />
+        </Link>
         <h1 className="text-4xl">Questions</h1>
-        <div className="absolute right-5">
+        <div className="mr-5">
           <ModeToggle />
         </div>
       </div>
@@ -48,7 +55,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
       {paginatedPosts.map((post) => (
         <div
           key={post.id}
-          className="m-5 border rounded-lg shadow-lg border-slate-300 dark:border-slate-800 max-w-[800px]"
+          className="m-5 border rounded-lg shadow-lg border-slate-300 dark:border-slate-800 w-[90vw] max-w-[800px] overflow-hidden"
         >
           <div className="p-5">
             <h2 className="font-semibold">Question 1</h2>
@@ -58,7 +65,7 @@ export default async function Home({ searchParams }: { searchParams: SearchParam
             <h2 className="font-semibold">Question 2</h2>
             <p className="text-sm text-muted-foreground">{post.question2}</p>
           </div>
-          <div className="p-5 pt-1 text-sm text-slate-500 flex justify-between items-center">
+          <div className="p-5 pt-1 text-xs md:text-sm text-slate-500 flex justify-between items-center">
             <div>
               <p>
                 Posted By: {post.roll1}, {post.roll2}
