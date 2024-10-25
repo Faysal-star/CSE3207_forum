@@ -21,7 +21,9 @@ export default async function Home({
   const postsPerPage = 10;
   const data = await getSheetData("A", "H");
 
-  const rows = (data ?? []).slice(1);
+  const reversedRows = (data ?? []).slice(1);
+
+  const rows = reversedRows.reverse();
 
   const posts = rows.map((row, index) => ({
     id: index + 2,
