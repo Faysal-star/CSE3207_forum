@@ -2,6 +2,14 @@
   "name": "cse20_forum",
   "version": "0.1.0",
   "private": true,
+  "description": "A Q&A Forum using Google Sheets as a Backend, with Data Collection via Google Forms and Automated Filtering with Apps Script",
+  "license": "AGPL-3.0",
+  "author": "Md. Faysal Mahmud",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Faysal-star/CSE3207_forum.git"
+  },
+  "homepage": "https://cse-3207-forum.vercel.app/",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
