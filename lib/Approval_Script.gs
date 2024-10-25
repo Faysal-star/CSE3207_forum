@@ -1,5 +1,5 @@
-const APPROVED_USERS_SHEET_NAME = "CSE20";
-const EMAIL_COLUMN = "A";
+const APPROVED_USERS_SHEET_NAME = 'CSE20';
+const EMAIL_COLUMN = 'A';
 const EMAIL_RESPONSE_COLUMN = 2;
 const CSE20_EMAIL_PATTERN = /^[a-z]+2007\d{3}@stud\.kuet\.ac\.bd$/i;
 
@@ -11,7 +11,7 @@ function onFormSubmit(e) {
     var respondentEmail = sheet.getRange(row, EMAIL_RESPONSE_COLUMN).getValue();
 
     if (!respondentEmail) {
-      Logger.log("No email found in submission");
+      Logger.log('No email found in submission');
       return;
     }
 
@@ -19,66 +19,40 @@ function onFormSubmit(e) {
     var approvedUsersSheet = ss.getSheetByName(APPROVED_USERS_SHEET_NAME);
 
     if (!approvedUsersSheet) {
-      throw new Error(
-        'Could not find sheet named "' + APPROVED_USERS_SHEET_NAME + '"'
-      );
+      throw new Error('Could not find sheet named "' + APPROVED_USERS_SHEET_NAME + '"');
     }
 
-    if (!CSE20_EMAIL_PATTERN.test(respondentEmail)) {
-      handleRejection(
-        ss,
-        sheet,
-        row,
-        respondentEmail,
-        "Invalid email format. Expected format: name2007XXX@stud.kuet.ac.bd"
-      );
-      return;
-    }
-
-    var approvedUsersRange = approvedUsersSheet.getRange(
-      EMAIL_COLUMN + ":" + EMAIL_COLUMN
-    );
-    var approvedUsers = approvedUsersRange
-      .getValues()
+    var approvedUsersRange = approvedUsersSheet.getRange(EMAIL_COLUMN + ':' + EMAIL_COLUMN);
+    var approvedUsers = approvedUsersRange.getValues()
       .flat()
       .filter(String)
-      .map((email) => email.toLowerCase().trim());
-    if (
-      !CSE20_EMAIL_PATTERN.test(respondentEmail) &&
-      !approvedUsers.includes(respondentEmail.toLowerCase().trim())
-    ) {
-      handleRejection(
-        ss,
-        sheet,
-        row,
-        respondentEmail,
-        "Email not in approved users list"
-      );
+      .map(email => email.toLowerCase().trim());
+      
+    if (!CSE20_EMAIL_PATTERN.test(respondentEmail) && !approvedUsers.includes(respondentEmail.toLowerCase().trim())) {
+      handleRejection(ss, sheet, row, respondentEmail, 'Email not in approved users list');
       return;
     }
 
-    Logger.log("Accepted submission from authorized user: " + respondentEmail);
+    Logger.log('Accepted submission from authorized user: ' + respondentEmail);
+
   } catch (error) {
-    Logger.log("Error in onFormSubmit: " + error.toString());
+    Logger.log('Error in onFormSubmit: ' + error.toString());
   }
 }
 
 function handleRejection(ss, sheet, row, respondentEmail, reason) {
-  var rejectedSheet = ss.getSheetByName("Rejected Responses");
+  var rejectedSheet = ss.getSheetByName('Rejected Responses');
   if (!rejectedSheet) {
-    rejectedSheet = ss.insertSheet("Rejected Responses");
+    rejectedSheet = ss.insertSheet('Rejected Responses');
     var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues();
     rejectedSheet.getRange(1, 1, 1, headers[0].length).setValues(headers);
   }
-  var responseData = sheet
-    .getRange(row, 1, 1, sheet.getLastColumn())
-    .getValues();
-  rejectedSheet
-    .getRange(rejectedSheet.getLastRow() + 1, 1, 1, responseData[0].length)
-    .setValues(responseData);
+  var responseData = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues();
+  rejectedSheet.getRange(rejectedSheet.getLastRow() + 1, 1, 1, responseData[0].length).setValues(responseData);
   sheet.deleteRow(row);
 
-  var emailSubject = "Form Submission Rejected";
+
+  var emailSubject = 'Form Submission Rejected';
   var emailBody = `<div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px;">
         <h1 style="color: #D32F2F; font-size: 24px; margin-bottom: 20px;">
           Form Submission Rejected
@@ -110,16 +84,10 @@ function handleRejection(ss, sheet, row, respondentEmail, reason) {
     to: respondentEmail,
     subject: emailSubject,
     htmlBody: emailBody,
-    noReply: false,
+    noReply: false
   });
 
-  Logger.log(
-    "Rejected submission from unauthorized user: " +
-      respondentEmail +
-      " (Reason: " +
-      reason +
-      ")"
-  );
+  Logger.log('Rejected submission from unauthorized user: ' + respondentEmail + ' (Reason: ' + reason + ')');
   return;
 }
 
@@ -128,7 +96,7 @@ function testEmailColumn() {
   var sheet = ss.getActiveSheet();
   var headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-  Logger.log("Column numbers and their headers:");
+  Logger.log('Column numbers and their headers:');
   headers.forEach((header, index) => {
     Logger.log(`Column ${index + 1}: ${header}`);
   });
@@ -136,17 +104,17 @@ function testEmailColumn() {
 
 function testEmailPattern() {
   var testEmails = [
-    "mahmud2007123@stud.kuet.ac.bd",
-    "mahmud2007999@stud.kuet.ac.bd",
-    "mahmud2007001@stud.kuet.ac.bd",
-    "mahmud2008123@stud.kuet.ac.bd",
-    "2007123@stud.kuet.ac.bd",
-    "m2007@stud.kuet.ac.bd",
-    "20071234@stud.kuet.ac.bd",
-    "mahmud@gmail.com",
+    'mahmud2007123@stud.kuet.ac.bd',
+    'mahmud2007999@stud.kuet.ac.bd',
+    'mahmud2007001@stud.kuet.ac.bd',
+    'mahmud2008123@stud.kuet.ac.bd',
+    '2007123@stud.kuet.ac.bd',
+    'm2007@stud.kuet.ac.bd',
+    '20071234@stud.kuet.ac.bd',
+    'mahmud@gmail.com'
   ];
-
-  testEmails.forEach((email) => {
+  
+  testEmails.forEach(email => {
     Logger.log(`Testing ${email}: ${CSE20_EMAIL_PATTERN.test(email)}`);
   });
 }
