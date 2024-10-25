@@ -1,9 +1,14 @@
 import { google } from 'googleapis';
 
-async function getSheetData(st : string , ed : string) {
-    const auth = await google.auth.getClient({
-        scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-    });
+async function getSheetData(st: string, ed: string) {
+    const getGoogleAuth = () => {
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS || '{}');
+        return new google.auth.GoogleAuth({
+            credentials,
+            scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly']
+        });
+    };
+    const auth = await getGoogleAuth();
     const sheets = google.sheets({ version: 'v4', auth });
 
     const range = `Form Responses 1!${st}:${ed}`;
