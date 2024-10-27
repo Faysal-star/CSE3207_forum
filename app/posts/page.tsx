@@ -26,7 +26,7 @@ export default async function Home({
   const rows = reversedRows.reverse();
 
   const posts = rows.map((row, index) => ({
-    id: index + 2,
+    id: rows.length - index + 1,
     timestamp: row[0],
     email: row[1],
     question1: row[2],
